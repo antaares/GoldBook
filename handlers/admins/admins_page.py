@@ -24,7 +24,7 @@ async def send_welcome(message: types.Message):
 
 @dp.message_handler(IsAdmin(), IsPrivate(), Text(equals="📈Statistika📉"), state="*")
 async def SendStat(message: types.Message):
-    users = 1200
+    users = len(db.all())
     text = f"Foydalanuvchilar: {users} ta"
     await message.answer(text=text)
 
