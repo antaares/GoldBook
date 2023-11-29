@@ -104,4 +104,4 @@ async def error(message: types.Message):
 
 @dp.message_handler(commands="info")
 async def info(message: types.Message):
-    await message.answer(message.chat.id)
+    await message.answer(message.chat.id, reply_markup=remove_button)

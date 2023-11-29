@@ -1,5 +1,6 @@
 import asyncio
 from filters.is_admin import IsAdmin
+from filters.is_private import IsPrivate
 
 
 from loader import dp, db, bot
@@ -14,14 +15,14 @@ from aiogram.dispatcher import FSMContext
 from states.users import AdminState
 from utils.db_api.database import Database
 
-@dp.message_handler(IsAdmin(), commands=['dastur'])
+@dp.message_handler(IsAdmin(), IsPrivate(), commands=['dastur'])
 async def send_welcome(message: types.Message):
     text = "Assalomu alaykum, siz admin paneldasiz..."
     await message.answer(text=text, reply_markup=ADMIN_MENU)
 
 
 
-@dp.message_handler(IsAdmin(), Text(equals="📈Statistika📉"), state="*")
+@dp.message_handler(IsAdmin(), IsPrivate(), Text(equals="📈Statistika📉"), state="*")
 async def SendStat(message: types.Message):
     users = 1200
     text = f"Foydalanuvchilar: {users} ta"
@@ -30,7 +31,7 @@ async def SendStat(message: types.Message):
 
 
 
-@dp.message_handler(IsAdmin(), Text(equals="📤Xabar yuborish📬"), state="*")
+@dp.message_handler(IsAdmin(), IsPrivate(), Text(equals="📤Xabar yuborish📬"), state="*")
 async def startForm(message: types.Message, state: FSMContext):
     text = "Ho‘sh, demak boshladik, menga barcha foydalanuvchilarga yubormoqchi bo‘lgan xabaringizni yuboring:"
     await message.answer(text=text, reply_markup=BACK)
@@ -40,7 +41,7 @@ async def startForm(message: types.Message, state: FSMContext):
 
 
 
-@dp.message_handler(content_types=types.ContentType.ANY, state=AdminState.getMessage)
+@dp.message_handler(IsPrivate(), content_types=types.ContentType.ANY, state=AdminState.getMessage)
 async def get_message(message: types.Message, state: FSMContext):
     text = message.text
 
@@ -64,7 +65,7 @@ async def get_message(message: types.Message, state: FSMContext):
 
 
 
-@dp.message_handler(state=AdminState.Choice)
+@dp.message_handler(IsPrivate(), state=AdminState.Choice)
 async def choiceMethod(message: types.Message, state: FSMContext):
     text = message.text
 
@@ -87,7 +88,7 @@ async def choiceMethod(message: types.Message, state: FSMContext):
 
 
 
-@dp.message_handler(state=AdminState.Confirm)
+@dp.message_handler(IsPrivate(), state=AdminState.Confirm)
 async def Sending(message: types.Message, state: FSMContext):
     text = message.text
     if text == "Yuborish":
