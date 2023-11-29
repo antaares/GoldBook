@@ -71,6 +71,7 @@ async def get_second_phone(message: types.Message, state: FSMContext):
 async def get_books(message: types.Message, state: FSMContext):
     await state.update_data(books=message.text)
     await message.answer(QUESTIONS['last-words'], reply_markup=remove_button)
+    await message.answer(QUESTIONS['start'], reply_markup=remove_button)
     
 
     """Send message to admin"""
@@ -83,6 +84,9 @@ async def get_books(message: types.Message, state: FSMContext):
     <b>Qo'shimcha raqami:</b> {data.get('second_phone')}
     <b>Kitobi:</b> {data.get('books')}
     """, parse_mode='HTML')
+    await state.finish()
+    await state.reset_state()
+    await UserState.start.set()
 
 
 
