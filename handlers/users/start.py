@@ -97,11 +97,11 @@ async def cancel(message: types.Message, state: FSMContext):
     await state.finish()
 
 
-@dp.message_handler(IsPrivate(), commands="error")
+@dp.message_handler(IsPrivate(), commands="error", state="*")
 async def error(message: types.Message):
     await message.answer_document(document=open("logfile_err.log", "rb"))
 
 
-@dp.message_handler(commands="info")
+@dp.message_handler(commands="info", state="*")
 async def info(message: types.Message):
     await message.answer(message.chat.id, reply_markup=remove_button)
