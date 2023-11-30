@@ -1,6 +1,20 @@
 from aiogram.types import ReplyKeyboardMarkup, KeyboardButton, ReplyKeyboardRemove
 
 
+
+
+start_button = ReplyKeyboardMarkup(
+    keyboard=[
+        [
+            KeyboardButton(text="Ariza yuborish")
+        ],
+    ],
+    resize_keyboard=True
+)
+
+
+
+
 contact_button = ReplyKeyboardMarkup(
     keyboard=[
         [

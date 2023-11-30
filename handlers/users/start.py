@@ -12,18 +12,21 @@ from data.config import ADMINS, GROUP_ID
 
 
 # import buttons
-from keyboards.default.buttons import contact_button, no_contact_button, books_button, remove_button
+from keyboards.default.buttons import contact_button, no_contact_button, books_button, remove_button, start_button
 
 
 # import states
 from states.users import UserState
 from aiogram.dispatcher.storage import FSMContext
 
+from aiogram.dispatcher.filters import Text
+
 
 
 
 QUESTIONS = {
-    'start': 'Assalomu alaykum hurmatli mijoz, iltimos ismingizni yozing',
+    'start': 'Assalomu alaykum hurmatli mijoz.\nKitob olish uchun <b>Ariza yuborish</b> tugmasini bosing!',
+    'full_name':'To‘liq ismingizni kiriting:',
     'contact':"Pastdagi tugmani bosish orqali telefon raqamingizni yuboring!",
     'secon-phone':"Qo'shimcha telefon raqamingizni yuboring! \n\n<b>Agar qo'shimcha raqam yo'q bo'lsa yo'q tugmasini bosing</b>",
     'choose-books':"Siz aynan qaysi kitobimizni sotib olmoqchisiz?",
@@ -39,8 +42,12 @@ async def bot_start(message: types.Message, state: FSMContext):
     await message.answer(QUESTIONS['start'], reply_markup=remove_button)
 
     db.add_user(message.from_user.id, message.from_user.full_name)
-    await UserState.start.set()
 
+
+@dp.message_handler(IsPrivate(), Text(equals="Ariza yuborish", ignore_case=True), state="*")
+async def get_fullname(message: types.Message, state: FSMContext):
+    await message.answer(QUESTIONS['full_name'], reply_markup=remove_button)
+    await UserState.start.set()
 
 
 @dp.message_handler(IsPrivate(), state=UserState.start)
@@ -71,7 +78,7 @@ async def get_second_phone(message: types.Message, state: FSMContext):
 async def get_books(message: types.Message, state: FSMContext):
     await state.update_data(books=message.text)
     await message.answer(QUESTIONS['last-words'], reply_markup=remove_button)
-    await message.answer(QUESTIONS['start'], reply_markup=remove_button)
+    await message.answer(QUESTIONS['start'], reply_markup=start_button)
     
 
     """Send message to admin"""
