@@ -39,7 +39,7 @@ QUESTIONS = {
 
 @dp.message_handler(IsPrivate(), CommandStart())
 async def bot_start(message: types.Message, state: FSMContext):
-    await message.answer(QUESTIONS['start'], reply_markup=remove_button)
+    await message.answer(QUESTIONS['start'], reply_markup=start_button)
 
     db.add_user(message.from_user.id, message.from_user.full_name)
 
@@ -100,7 +100,7 @@ async def get_books(message: types.Message, state: FSMContext):
 # cancel handler
 @dp.message_handler(IsPrivate(), state="*", commands="cancel")
 async def cancel(message: types.Message, state: FSMContext):
-    await message.answer("Siz malumotlarni o'chirib tashladingiz!", reply_markup=types.ReplyKeyboardRemove())
+    await message.answer("Siz malumotlarni o'chirib tashladingiz!", reply_markup=start_button)
     await state.finish()
 
 
