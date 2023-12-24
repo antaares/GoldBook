@@ -78,11 +78,6 @@ async def choiceMethod(message: types.Message, state: FSMContext):
 
     data = await state.get_data()
     MessageID = data['MessageID']
-    # await message.answer(
-    #     text="Shu xabarni yuboramizmi?",
-    #     reply_to_message_id=MessageID, 
-    #     reply_markup=CONFIRM
-    #         )
     await bot.send_message(
         chat_id=message.chat.id,
         text="Shu xabarni yuboramizmi?",

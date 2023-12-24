@@ -50,6 +50,7 @@ async def get_fullname(message: types.Message, state: FSMContext):
     await UserState.full_name.set()
 
 # 3
+@dp.message_handler(IsPrivate(), state=UserState.full_name)
 async def get_fullname(message: types.Message, state: FSMContext):
     await state.update_data(full_name=message.text)
     await message.answer(QUESTIONS['interesting'], reply_markup=books_button)
