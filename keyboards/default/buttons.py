@@ -13,8 +13,6 @@ start_button = ReplyKeyboardMarkup(
 )
 
 
-
-
 contact_button = ReplyKeyboardMarkup(
     keyboard=[
         [
@@ -24,14 +22,10 @@ contact_button = ReplyKeyboardMarkup(
         resize_keyboard=True
 )
 
+
+
 remove_button = ReplyKeyboardRemove()
 
-no_contact_button = ReplyKeyboardMarkup(
-    keyboard=[
-            [KeyboardButton(text="Yo'q")]
-        ],
-        resize_keyboard=True
-)
 
 
 books_button = ReplyKeyboardMarkup(
@@ -71,6 +65,7 @@ ADMIN_MENU = ReplyKeyboardMarkup(
     resize_keyboard=True
 )
 
+
 BACK = ReplyKeyboardMarkup(
     keyboard=[
         [
@@ -79,10 +74,6 @@ BACK = ReplyKeyboardMarkup(
     ],
     resize_keyboard=True
 )
-
-
-
-
 
 
 

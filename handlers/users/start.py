@@ -7,12 +7,12 @@ from filters.is_private import IsPrivate
 from loader import dp, db 
 
 
-from data.config import ADMINS, GROUP_ID
+from data.config import GROUP_ID
 
 
 
 # import buttons
-from keyboards.default.buttons import contact_button, no_contact_button, books_button, remove_button, start_button
+from keyboards.default.buttons import contact_button, books_button, remove_button, start_button
 
 
 # import states
@@ -21,64 +21,65 @@ from aiogram.dispatcher.storage import FSMContext
 
 from aiogram.dispatcher.filters import Text
 
-
-
-
 QUESTIONS = {
-    'start': 'Assalomu alaykum hurmatli mijoz.\nKitob olish uchun <b>Ariza yuborish</b> tugmasini bosing!',
-    'full_name':'To‘liq ismingizni kiriting:',
-    'contact':"Pastdagi tugmani bosish orqali telefon raqamingizni yuboring!",
-    'secon-phone':"Qo'shimcha telefon raqamingizni yuboring! \n\n<b>Agar qo'shimcha raqam yo'q bo'lsa yo'q tugmasini bosing</b>",
-    'choose-books':"Siz aynan qaysi kitobimizni sotib olmoqchisiz?",
-    'last-words':'Tez orada siz bilan mutaxasisimiz bog‘lanadi!'     
+    'start': 'Assalomu alaykum hurmatli mijoz.\nKitob olish uchun <b>Ariza yuborish</b> tugmasini bosing!',  # 1
+    'full_name':'To‘liq ismingizni kiriting:',   #2
+    'interesting':"Sizga qaysi til koʻproq qiziq?",   #3
+    'whyyouneed':"Nega aynan {} sizga kerak?",   #4
+    'wehelptoyou':"Sizdagi muammoga Goldbook yordam bera oladi😊 Siz bilan tez orada bogʻlanamiz!",  #6
+    'contact':"Pastdagi tugmani bosish orqali telefon raqamingizni yuboring!", #5
+    "ifyouwant": "Istasangiz biz bilan bogʻlaning!\n99-582-40-00 Goldbook Shaxzoda👩🏻‍💼\n99-592-66-00 Goldbook Ozoda👩🏽‍💻"   #7
 }
 
 
 
 
 
+
+# 1
 @dp.message_handler(IsPrivate(), CommandStart())
 async def bot_start(message: types.Message, state: FSMContext):
     await message.answer(QUESTIONS['start'], reply_markup=start_button)
 
     db.add_user(message.from_user.id, message.from_user.full_name)
 
-
+# 2
 @dp.message_handler(IsPrivate(), Text(equals="Ariza yuborish", ignore_case=True), state="*")
 async def get_fullname(message: types.Message, state: FSMContext):
     await message.answer(QUESTIONS['full_name'], reply_markup=remove_button)
-    await UserState.start.set()
+    await UserState.full_name.set()
 
-
-@dp.message_handler(IsPrivate(), state=UserState.start)
+# 3
 async def get_fullname(message: types.Message, state: FSMContext):
     await state.update_data(full_name=message.text)
+    await message.answer(QUESTIONS['interesting'], reply_markup=books_button)
+    await UserState.interesting.set()
+
+# 4
+@dp.message_handler(IsPrivate(), state=UserState.interesting)
+async def get_interestingt(message: types.Message, state: FSMContext):
+    await state.update_data(interesting=message.text)   
+    await message.answer(QUESTIONS['whyyouneed'].format(message.text), reply_markup=remove_button)
+    await UserState.reason.set()
+
+
+# 5
+@dp.message_handler(IsPrivate(), state=UserState.reason)
+async def get_reason(message: types.Message, state: FSMContext):
+    await state.update_data(reason=message.text)       
     await message.answer(QUESTIONS['contact'], reply_markup=contact_button)
     await UserState.contact.set()
 
 
-@dp.message_handler(IsPrivate(), state=UserState.contact, content_types=types.ContentType.CONTACT)
+# 6
+@dp.message_handler(IsPrivate(), state=UserState.contact)
 async def get_contact(message: types.Message, state: FSMContext):
     if message.contact:
         await state.update_data(contact=message.contact.phone_number)
     else:
-        await state.update_data(contact=message.text)   
-    await message.answer(QUESTIONS['secon-phone'], reply_markup=no_contact_button)
-    await UserState.second_phone.set()
-
-@dp.message_handler(IsPrivate(), state=UserState.second_phone)
-async def get_second_phone(message: types.Message, state: FSMContext):
-    await state.update_data(second_phone=None)
-    if message.text != "Yo'q":
-        await state.update_data(second_phone=message.text)        
-    await message.answer(QUESTIONS['choose-books'], reply_markup=books_button)
-    await UserState.choose_books.set()
-
-@dp.message_handler(IsPrivate(), state=UserState.choose_books)
-async def get_books(message: types.Message, state: FSMContext):
-    await state.update_data(books=message.text)
-    await message.answer(QUESTIONS['last-words'], reply_markup=remove_button)
-    await message.answer(QUESTIONS['start'], reply_markup=start_button)
+        await state.update_data(contact=message.text) 
+    await message.answer(QUESTIONS['wehelptoyou'], reply_markup=remove_button)
+    await message.answer(QUESTIONS['ifyouwant'], reply_markup=start_button)
     
 
     """Send message to admin"""
@@ -88,8 +89,8 @@ async def get_books(message: types.Message, state: FSMContext):
     <b>Ismi:</b> {data.get('full_name')}
     <b>Telegram ID:</b> <a href=\"tg://user?id={message.from_user.id}\">{message.from_user.id}</a>
     <b>Telefon raqami:</b> {data.get('contact')}
-    <b>Qo'shimcha raqami:</b> {data.get('second_phone')}
-    <b>Kitobi:</b> {data.get('books')}
+    <b>Qiziqadigan tili:</b> {data.get('interesting')}
+    <b>Kitobga qiziqish sababi:</b> {data.get('reason')}
     """, parse_mode='HTML')
     await state.finish()
     await state.reset_state()

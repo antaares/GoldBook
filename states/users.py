@@ -4,10 +4,10 @@ from aiogram.dispatcher.filters.state import State, StatesGroup
 class UserState(StatesGroup):
     """States of user"""
     start = State()
+    full_name = State()
+    interesting = State()
+    reason = State()
     contact = State()
-    second_phone = State()
-    choose_books = State()
-    last_words = State()
     error = State()
 
 
