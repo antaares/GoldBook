@@ -1,3 +1,4 @@
+import asyncio
 from aiogram import types
 from aiogram.dispatcher.filters.builtin import CommandStart
 
@@ -73,13 +74,15 @@ async def get_reason(message: types.Message, state: FSMContext):
 
 
 # 6
-@dp.message_handler(IsPrivate(), state=UserState.contact)
+@dp.message_handler(IsPrivate(), state=UserState.contact, content_types=types.ContentType.CONTACT | types.ContentType.TEXT)
 async def get_contact(message: types.Message, state: FSMContext):
     if message.contact:
         await state.update_data(contact=message.contact.phone_number)
     else:
         await state.update_data(contact=message.text) 
+        
     await message.answer(QUESTIONS['wehelptoyou'], reply_markup=remove_button)
+    await asyncio.sleep(1)
     await message.answer(QUESTIONS['ifyouwant'], reply_markup=start_button)
     
 
