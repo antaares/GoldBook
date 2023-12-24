@@ -91,7 +91,7 @@ async def get_contact(message: types.Message, state: FSMContext):
     await dp.bot.send_message(chat_id= GROUP_ID, text=f"""
     <b>Yangi mijoz</b>
     <b>Ismi:</b> {data.get('full_name')}
-    <b>Telegram ID:</b> <a href=\"tg://user?id={message.from_user.id}\">{message.from_user.id}  </a> {message.from_user.username if message.from_user.username is not None else ''}
+    <b>Telegram ID:</b> <a href=\"tg://user?id={message.from_user.id}\">{message.from_user.id}  </a> {'@' + message.from_user.username if message.from_user.username is not None else ''}
     <b>Telefon raqami:</b> {data.get('contact')}
     <b>Qiziqadigan tili:</b> {data.get('interesting')}
     <b>Kitobga qiziqish sababi:</b> {data.get('reason')}
