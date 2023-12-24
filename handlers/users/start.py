@@ -74,7 +74,7 @@ async def get_reason(message: types.Message, state: FSMContext):
 
 
 # 6
-@dp.message_handler(IsPrivate(), state=UserState.contact, content_types=types.ContentType.CONTACT | types.ContentType.TEXT)
+@dp.message_handler(IsPrivate(), state=UserState.contact, content_types=types.ContentType.CONTACT or types.ContentType.TEXT)
 async def get_contact(message: types.Message, state: FSMContext):
     if message.contact:
         await state.update_data(contact=message.contact.phone_number)
