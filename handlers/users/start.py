@@ -13,7 +13,7 @@ from data.config import GROUP_ID
 
 
 # import buttons
-from keyboards.default.buttons import contact_button, books_button, remove_button, start_button
+from keyboards.default.buttons import contact_button, books_button, remove_button, start_button, choice_goal_button
 
 
 # import states
@@ -61,13 +61,17 @@ async def get_fullname(message: types.Message, state: FSMContext):
 @dp.message_handler(IsPrivate(), state=UserState.interesting)
 async def get_interestingt(message: types.Message, state: FSMContext):
     await state.update_data(interesting=message.text)   
-    await message.answer(QUESTIONS['whyyouneed'].format(message.text), reply_markup=remove_button)
+    await message.answer(QUESTIONS['whyyouneed'].format(message.text), reply_markup=choice_goal_button)
     await UserState.reason.set()
 
 
 # 5
 @dp.message_handler(IsPrivate(), state=UserState.reason)
 async def get_reason(message: types.Message, state: FSMContext):
+    choices = ['Sayohat uchun', 'Ish uchun', 'O‘qish uchun', 'Boshqa sabab']
+    if message.text not in choices:
+        await message.answer('Iltimos, quyidagi tugmalardan birini tanlang!', reply_markup=choice_goal_button)
+        return
     await state.update_data(reason=message.text)       
     await message.answer(QUESTIONS['contact'], reply_markup=contact_button)
     await UserState.contact.set()

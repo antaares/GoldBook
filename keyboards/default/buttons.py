@@ -46,6 +46,23 @@ books_button = ReplyKeyboardMarkup(
 
 
 
+choice_goal_button = ReplyKeyboardMarkup(
+    keyboard=[
+        [
+            KeyboardButton(text="Sayohat uchun"),
+            KeyboardButton(text="Ish uchun")
+        ],
+        [
+            KeyboardButton(text="O‘qish uchun"),
+            KeyboardButton(text="Boshqa sabab")
+        ]
+    ],
+    resize_keyboard=True
+    
+)
+
+
+
 
 
 
